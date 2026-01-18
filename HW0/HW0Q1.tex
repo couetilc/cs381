@@ -63,13 +63,7 @@
 
 \section{Exercise 1.3.1}
 
-For a some index i in an array with distinct elements, A[i] is always greater than the previous element (where the previous element of the first element is the last), except at the rotation index, as the array is in ascending order before rotation. So, we can perform a binary search whose match condition for an element is whether the relation A[i] > A[n + i - 1 mod n] holds.
-
-If it does not hold, we have found the rotation index. If it does hold, we must search either the earlier or later elements relative to our current element. Recognize the element at the rotation index must be less than the first element in the array, it denotes the start of the ascending order. Then, if the current element is greater than the first element, the rotation index is to the right of the current element, otherwise it's to the left. We'll continue this search until we've found the rotation index.
-
-There is a special case, when the array has not been rotated. Only in this case is the first element less than the last element, and the index is 1.
-
-Now for the recursive algorithm. We'll assume the special case will not occur and that Midpoint is a routine that finds the middle-most integer between two integers in constant time.
+You can tell where you are in a rotated array by comparing against the first element of the array. That way, you tell if you are in the rotated portion or merely the shifted portion.
 
 \paragraph{Recursive Algorithm}
 
@@ -88,14 +82,94 @@ Now for the recursive algorithm. We'll assume the special case will not occur an
         \end{steps}
         \item If $array[midpoint] > array[1]$
         \begin{steps}
-            \item Return Search($array$, $midpoint$, $end$)
+            \item Return RotationIndex($array$, $midpoint$, $end$)
         \end{steps}
-        \item Return Search($array$, $start$, $midpoint$)
+        \item Return RotationIndex($array$, $start$, $midpoint$)
     \end{steps}
 \end{quote}
 
 \paragraph{Runtime Analysis}
 
 O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+
+\section{Exercise 1.3.2}
+
+For every point in a binary search, we check the neighbors of the midpoint for a peak, otherwise we follow the upslope to the peak of the mountain.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{MountainIndex($array$, $start$, $end$)}}
+    \begin{steps}
+        \item If $start == end$
+        \begin{steps}
+            \item Return $1$
+        \end{steps}
+        \item $midpoint$ = $\lceil (end - start + 1) / 2 \rceil + start$
+        \item $left$ = $(midpoint - 1)$ mod Length($array$)
+        \item $right$ = $(midpoint - 1)$ mod Length($array$)
+        \item If $array[midpoint] > array[left]$ and  $array[midpoint] > array[right]$
+        \begin{steps}
+            \item Return $midpoint$
+        \end{steps}
+        \item If $array[midpoint] > array[left]$
+        \begin{steps}
+            \item Return MountainIndex($array$, $midpoint$, $end$)
+        \end{steps}
+        \item Return MountainIndex($array$, $start$, $midpoint$)
+    \end{steps}
+\end{quote}
+
+\paragraph{Runtime Analysis}
+
+O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+
+\section{Exercise 1.3.3}
+
+\paragraph{Recursive Algorithm}
+
+The heuristic is to follow a downslope or unslope until the local minimum. If we
+follow the slope, we either meet a boundary condition, or we must meet a point
+at which the slope turns.
+
+Assuming the array has a non-zero length.
+
+\begin{quote}
+    \noindent\texttt{\underline{LocalMinimum($array$, $start$, $length$)}}
+    \begin{steps}
+        \item If $length$ == 1
+        \begin{steps}
+            \item Return $start$
+        \end{steps}
+        \item If $array[start]$ < $array[start + 1]$
+        \begin{steps}
+            \item Return $start$
+        \end{steps}
+        \item If $array[start + length - 1]$ < $array[start + length - 2]$
+        \begin{steps}
+            \item Return $start + length - 1$
+        \end{steps}
+        \item return Search($array$, $start$, $length$) \texttt{// into recursion}
+    \end{steps}
+    \noindent\texttt{\underline{Search($array$, $start$, $length$)}}
+    \begin{steps}
+        \item $midpoint = start + length / 2$
+        \item $array[midpoint] < array[midpoint - 1]$ and $array[midpoint] < array[midpoint + 1]$
+        \begin{steps}
+            \item Return $midpoint$
+        \end{steps}
+        \item If $array[midpoint] > array[midpoint + 1]$ \texttt{// downslopes to right}
+        \begin{steps}
+            \item Return Search($array$, $midpoint$, $length / 2$)
+        \end{steps}
+        \item Return Search($array$, $start$, $length / 2$) \texttt{// upslopes to right}
+    \end{steps}
+\end{quote}
+
+\paragraph{Runtime Analysis}
+
+O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+
+\section{Exercise 1.3.4}
 
 \end{document}
