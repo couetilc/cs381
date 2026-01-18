@@ -1,0 +1,101 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 0 Problem 1}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 1.3.1}
+
+For a some index i in an array with distinct elements, A[i] is always greater than the previous element (where the previous element of the first element is the last), except at the rotation index, as the array is in ascending order before rotation. So, we can perform a binary search whose match condition for an element is whether the relation A[i] > A[n + i - 1 mod n] holds.
+
+If it does not hold, we have found the rotation index. If it does hold, we must search either the earlier or later elements relative to our current element. Recognize the element at the rotation index must be less than the first element in the array, it denotes the start of the ascending order. Then, if the current element is greater than the first element, the rotation index is to the right of the current element, otherwise it's to the left. We'll continue this search until we've found the rotation index.
+
+There is a special case, when the array has not been rotated. Only in this case is the first element less than the last element, and the index is 1.
+
+Now for the recursive algorithm. We'll assume the special case will not occur and that Midpoint is a routine that finds the middle-most integer between two integers in constant time.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{RotationIndex($array$, $start$, $end$)}}
+    \begin{steps}
+        \item If $start == end$
+        \begin{steps}
+            \item Return $1$
+        \end{steps}
+        \item $midpoint$ = $\lceil (end - start + 1) / 2 \rceil + start$
+        \item $neighbor$ = $(midpoint - 1)$ mod Length($array$)
+        \item If $array[midpoint] < array[neighbor]$
+        \begin{steps}
+            \item Return $midpoint$
+        \end{steps}
+        \item If $array[midpoint] > array[1]$
+        \begin{steps}
+            \item Return Search($array$, $midpoint$, $end$)
+        \end{steps}
+        \item Return Search($array$, $start$, $midpoint$)
+    \end{steps}
+\end{quote}
+
+\paragraph{Runtime Analysis}
+
+O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+
+\end{document}
