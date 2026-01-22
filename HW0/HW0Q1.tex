@@ -90,7 +90,7 @@ You can tell where you are in a rotated array by comparing against the first ele
 
 \paragraph{Runtime Analysis}
 
-O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+O(log $n$) as we are using binary search to move through the array. The recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$, $n$ approaches the base cases logarithmically.
 
 \section{Exercise 1.3.2}
 
@@ -122,7 +122,7 @@ For every point in a binary search, we check the neighbors of the midpoint for a
 
 \paragraph{Runtime Analysis}
 
-O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+O(log $n$) as we are using binary search to move through the array. The recurrence relation $\approx$ $S(n) = S(n/2) + C$, $S(1) = C$, $n$ approaches the base cases logarithmically, it's halved at each step of the recursion.
 
 \section{Exercise 1.3.3}
 
@@ -168,8 +168,64 @@ Assuming the array has a non-zero length.
 
 \paragraph{Runtime Analysis}
 
-O(log $n$) due to recurrence relation $\approx$ $S(n) = S(n/2) + c$, $S(1) = C$
+O(log $n$) as we are using binary search to move through the array. The recurrence relation $\approx$ $S(n) = S(n/2) + C$, $S(1) = C$, $n$ approaches the base cases logarithmically, it's halved at each step of the recursion.
 
 \section{Exercise 1.3.4}
+
+When you realize any array can be split and the sub array will exhibit the same odd gap property, the solution becomes a recursive binary search where you follow the odd arrays to the final odd gap.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{OddGap($array$, $start$, $length$)}}
+    \begin{steps}
+        \item If $length == 2$
+        \begin{steps}
+            \item Return $start$
+        \end{steps}
+        \item $midpoint = start + length / 2$
+        \item $lparity = array[midpoint] - array[start]$
+        \item If $lparity$ mod $2 == 1$
+        \begin{steps}
+            \item Return OddGap($array$, $start$, $length / 2$)
+        \end{steps}
+        \item Return OddGap($array$, $start + length / 2$, $length / 2$)
+    \end{steps}
+\end{quote}
+
+\paragraph{Runtime Analysis}
+
+O(log $n$) as we are using binary search to move through the array. The recurrence relation $\approx$ $S(n) = S(n/2) + C$, $S(2) = C$, $n$ approaches the base cases logarithmically, it's halved at each step of the recursion.
+
+\section{Exercise 1.3.5}
+
+Much like the previous problem, any subarrays must have the same property hold. So, we examine candidate jump pairs recursively, following the subarray where the final element is greater than the first, until we settle at the final jump pair.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{Jump($array$, $start$, $length$)}}
+    \begin{steps}
+        \item If $length == 2$
+        \begin{steps}
+            \item Return $start$
+        \end{steps}
+        \item $midpoint = start + length / 2$
+        \item $jump = array[midpoint] - array[start]$
+        \item If $jump > 0$
+        \begin{steps}
+            \item Return Jump($array$, $start$, $length / 2$)
+        \end{steps}
+        \item Return Jump($array$, $start + length / 2$, $length / 2$)
+    \end{steps}
+\end{quote}
+
+\paragraph{Runtime Analysis}
+
+O(log $n$) as we are using binary search to move through the array. The recurrence relation $\approx$ $S(n) = S(n/2) + C$, $S(2) = C$, $n$ approaches the base cases logarithmically, it's halved at each step of the recursion.
+
+\section{Exercise 1.3.6}
+
+A comparison query has 2 possible outcomes. We have $n$ elements sorted, which means the number of possible starting points for a search is $n$. So, we must have at least $2^k$ comparisons for $n$ elements. This is expressed as $2^k \geq n$, which may be represented as $k \geq log(n)$, meaning the smallest value for $k$ is $log(n)$, or that at least $log(n)$ comparisons must be made for $n$ elements, and that $\Omega(log(n))$ is thus the lower bound for search on a sorted list.
 
 \end{document}

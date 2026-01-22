@@ -1,0 +1,195 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 0 Problem 2}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 2.1.2}
+
+\paragraph{Recursive Spec}
+
+The spec is CyclicHanoi($n$, $A$, $B$, $C$) where rings are moved from $A$ to $B$ stacked in sorted order.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{CyclicHanoi($n$, $A$, $B$, $C$)}}
+    \begin{steps}
+        \item If $n$ > 0
+        \begin{steps}
+            \item CyclicHanoi($n - 1$, $A$, $C$, $B$)
+            \item Move top ring from $A$ to $B$
+            \item CyclicHanoi($n-1$, $C$, $B$, $A$)
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.1.3}
+
+\paragraph{Recursive Spec}
+
+The spec is DoubleCyclicHanoi($n$, $A$, $B$, $C$) where rings are moved from $A$ to $C$ stacked in sorted order.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{DoubleCyclicHanoi($n$, $A$, $B$, $C$)}}
+    \begin{steps}
+        \item CyclicHanoi($n$, $A$, $B$, $C$)
+        \item CyclicHanoi($n$, $B$, $C$, $A$)
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.1.4}
+
+\paragraph{Recursive Spec}
+
+The spec is ThickHanoi($3n$, $A$, $B$, $C$) where all $3n$ rings are moved from $A$ to $B$ stacked in sorted order.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{ThickHanoi($3n$, $A$, $B$, $C$)}}
+    \begin{steps}
+        \item If $n$ > 0
+        \begin{steps}
+            \item ThickHanoi($3(n-1)$, $A$, $C$, $B$)
+            \item Move top ring from $A$ to $B$
+            \item Move top ring from $A$ to $B$
+            \item Move top ring from $A$ to $B$
+            \item ThickHanoi($3(n-1)$, $C$, $B$, $A$)
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.1.5}
+
+\paragraph{Recursive Spec}
+
+The spec is TripleHanoi($3n$, $A$, $B$, $C$) where $3n$ rings are moved such that $n$ distinct rings are on each post, one of each size, stacked in sorted order.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{TripleHanoi($3n$, $A$, $B$, $C$)}}
+    \begin{steps}
+        \item If $n$ > 0
+        \begin{steps}
+            \item Towers-of-Hanoi($3n-1$, $A$, $B$, $C$)
+            \item Towers-of-Hanoi($3n-2$, $B$, $C$, $A$)
+            \item Towers-of-Hanoi($3n-3$, $C$, $A$, $B$)
+            \item TripleHanoi($3(n-1)$, $A$, $B$, $C$)
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+
+\section{Exercise 2.1.6}
+
+\paragraph{Recursive Spec}
+
+The spec is AmericanHanoi($n$, $Red$, $White$, $Blue$) where $n$ colored rings are moved to the post with the matching color stacked in sorted order.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{AmericanHanoi($n$, $Red$, $White$, $Blue$)}}
+    \begin{steps}
+        \item If $n > 0$
+        \begin{steps}
+            \item If bottom ring of $Red$ is white
+            \begin{steps}
+                \item Towers-of-Hanoi($n-1$, $Red$, $Blue$, $White$)
+                \item Move top ring of $Red$ to $White$
+                \item Towers-of-Hanoi($n-1$, $Blue$, $Red$, $White$)
+            \end{steps}
+            \item If bottom ring of $Red$ is blue
+            \begin{steps}
+                \item Towers-of-Hanoi($n-1$, $Red$, $White$, $Blue$)
+                \item Move top ring of $Red$ to $Blue$
+                \item Towers-of-Hanoi($n-1$, $White$, $Red$, $Blue$)
+            \end{steps}
+            \item AmericanHanoi($n-1$, $Red$, $White$, $Blue$)
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.1.8}
+
+My variant is called "AustralianHanoi".
+
+\paragraph{Recursive Spec}
+
+The spec is AustralianHanoi($n$, $A$, $B$, $C$) where $n$ rings are moved from $A$ to $B$ in the reverse order they started in. Crikey!
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{AustralianHanoi($n$, $A$, $B$, $C$)}}
+    \begin{steps}
+        \item If $n > 0$
+        \begin{steps}
+            \item Move the top ring from $A$ to $B$
+            \item AustralianHanoi($n - 1$, $A$, $B$, $C$)
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+\end{document}

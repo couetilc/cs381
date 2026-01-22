@@ -1,0 +1,188 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 0 Problem 3}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 2.2.3}
+
+The following is a brute-force algorithm that selects all possible combinations
+of edges, counting each edge as part of the matching set only if it is disjoint
+with edges selected later. The base case is when the graph $G$ as one edge, the
+matching set is one.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{max-matching($G = (V, E)$)}}
+    \begin{steps}
+        \item If $|E|$ is 1
+        \begin{steps}
+            \item Return 1
+        \end{steps}
+        \item Let there be an empty set $M$
+        \item For each edge $e$ in $E$
+        \begin{steps}
+            \item Remove $e$ from $G$, producing $G' = (V, E')$
+            \item If $e$ is disjoint with all edges in $G'$
+            \begin{steps}
+                \item Add (1 + max-matching($G'$)) to $M$
+            \end{steps}
+            \item Else
+            \begin{steps}
+                \item Add (max-matching($G'$)) to $M$
+            \end{steps}
+        \end{steps}
+        \item Return the largest value in $M$
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.2.4}
+
+The key observation is that if we select some vertex to be part of the independent set, the other endpoint in all the edges it's a part of cannot be part of that independent set. So we can remove those vertexes and their associated edges from the graph, and recurse until no edges are left, with each recursion iteration choosing one next possible independent vertex. If we do this exhaustively, and bubble up the maximums from each recursive call, we'll find the maximum independent set size for the original graph.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{max-independent-set($G = (V, E)$)}}
+    \begin{steps}
+        \item If $|E|$ is empty
+        \begin{steps}
+            \item Return $|V|$
+        \end{steps}
+        \item Let there be an empty set, $M$
+        \item For each vertex $v$ in $V$
+        \begin{steps}
+            \item Let $G'$ equal $G$
+            \item For each edge $e = (v, v')$ in $E$ containing $v$
+            \begin{steps}
+                \item Remove any edges containing $v'$ from $G'$
+                \item Remove the vertex $v'$ from $G'$
+            \end{steps}
+            \item add (1 + max-independent-set($G'$)) to $M$
+        \end{steps}
+        \item Return the largest value in $M$
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.2.5}
+
+We'll recurse on all values of $x$ greater than $x_1$, those sub-sequences are the same problem. The approach is depth-first search on all possible orderings of values in the array. There's probably a more efficient approach where you discard inversions and recurse to combine subsequences.
+
+\paragraph{Recursive Algorithm}
+
+\begin{quote}
+    \noindent\texttt{\underline{longest-increasing-subsequence-including-first($x_1$, $...$, $x_n$)}}
+    \begin{steps}
+        \item If $n$ is 1
+        \begin{steps}
+            \item Return 1
+        \end{steps}
+        \item Let there be an empty set, $M$
+        \item For $x_i$ in $x_2$, $...$, $x_n$
+        \begin{steps}
+            \item If $x_i > x_1$
+            \begin{steps}
+                \item Add (1 + longest-increasing-subsequence-including-first($x_i$, $...$, $x_n$)) to $M$
+            \end{steps}
+        \end{steps}
+        \item Return the largest value in $M$
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.2.6}
+
+For each edge $s$ is a part of, if its other endpoint can react $t$ then $s$ can reach $t$. The base case is if $s$ has an edge with $t$.
+
+\begin{quote}
+    \noindent\texttt{\underline{reachable($G = (V, E)$, $s$, $t$)}}
+    \begin{steps}
+        \item For each edge $e = (s, v)$ in $E$ containing $s$ as the start
+        \begin{steps}
+            \item If $v$ is $t$
+            \begin{steps}
+                \item Return true
+            \end{steps}
+            \item Return reachable($G = (V, E)$, $v$, $t$)
+        \end{steps}
+        \item Return false
+    \end{steps}
+\end{quote}
+
+\section{Exercise 2.2.7}
+
+The partition problem is similar to the subset sum problem. The key observation is that we can reduce the size of the problem by combining two elements into one and recursing. If the elements will be in the same partition in a final solution, then we can combine them into their sum. If the elements will not be in the same partition in the final solution, then we can cancel them out by their difference.
+
+\begin{quote}
+    \noindent\texttt{\underline{partition($x_1$, $...$, $x_n$)}}
+    \begin{steps}
+        \item If $n$ is $0$
+        \begin{steps}
+            \item Return true
+        \end{steps}
+        \item If $n$ is 1
+        \begin{steps}
+            \item Return $x_n$ == $0$
+        \end{steps}
+        \item Return partition($x_1 + x_2$, $...$, $x_n$) $\lor$ partition($x_1 - x_2$, $...$, $x_n$)
+    \end{steps}
+\end{quote}
+
+\end{document}
