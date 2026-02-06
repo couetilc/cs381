@@ -1,0 +1,140 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+\usepackage[dvipsnames]{xcolor}
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 1 Problem 3}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 4.5.1}
+
+\begin{quote}
+    \noindent\texttt{\underline{unique-sums($X$, $Y$)}}: Given two sets of integers, $X$ and $Y$, each containing $n$ distinct integers, and returns a set of unique sums from $X$ and $Y$.
+    \begin{steps}
+        \item If $|X|$ or $|Y|$ is zero, return $\emptyset$
+        \item Let $A$ be an array of size $|X| \cdot |Y|$
+        \item for $x_i \in X : i = 1, ..., |X|$
+        \begin{steps}
+            \item for $y_i \in Y : i = 1, ..., |Y|$
+            \begin{steps}
+                \item $A[|Y| \cdot i + j] = x_i + y_j$
+            \end{steps}
+        \end{steps}
+        \item Return $\texttt{unique(merge-sort($A$))}$
+    \end{steps}
+    \noindent\texttt{\underline{unique($A$)}}: Given an array $A$ of ordered integers, returns an array of only the unique integers in $A$
+    \begin{steps}
+        \item If $|A|$ is zero or 1, Return $A$
+        \item Let $n = |A|$
+        \item If $A[0] \neq A[1]$
+        \begin{steps}
+            \item Return $A[0] + \texttt{unique($A[1, ..., n]$)}$
+        \end{steps}
+        \item Return $\texttt{unique($A[1, ..., n]$)}$
+    \end{steps}
+\end{quote}
+
+I'll begin by discussing the time complexity of \texttt{unique($A$)}. At each
+iteration, it reduces the size of the array $A$ by one and terminates when the
+array's size is zero or one. Thus, its time complexity is proportional to the
+size of the array and is $O(n)$. It's proof of correctness is simple, if the
+beginning of a sorted array is not equal to the next element, it must be unique.
+If it wasn't unique, then a repeated element later in the array would
+necessarily be out of order with the next element, having returned to the initial value, contradicting its sorted
+property. The recurrence relation looks like
+
+\begin{quote}
+$T(1) = 1$
+\\
+$T(n) = T(n - 1) + 1$
+\end{quote}
+
+
+Let's examine \texttt{unique-sums($X$, $Y$)}. We begin with a nested iteration
+of both arrays, producing an array of all possible sums in $O(n^2)$ time. We
+then sort the $n \times n$ array using \texttt{merge-sort}, taking
+$O(n^2\,log(n^2))$ time (it simplifies to $O(2\cdot n^2\,log(n))$ then we will
+disregard the constant in our analysis) We then call \texttt{unique}, taking
+$O(n)$ time. There is no recursion in \texttt{unique-sums}, thus the $O(
+n^2\,log(n))$ dominates the complexity and is our worst-case runtime for the
+algorithm.
+
+\section{Exercise 4.5.2}
+
+\begin{quote}
+    \noindent\texttt{\underline{unique-sums($X$, $Y$)}}: Given two sets of
+    integers, $X$ and $Y$, each containing $n$ distinct integers whose values
+    are between $0$ and some fixed natural number $M$, returns a set of the
+    unique sums from $X$ and $Y$.
+    \begin{steps}
+        \item Let sets $A$ and $B$ be of size $n$
+        \item Let set $D$ be of size $2 \cdot M$
+        \item $A = \texttt{merge-sort($X$)}$
+        \item $B = \texttt{merge-sort($Y$)}$
+        \item Return something
+    \end{steps}
+\end{quote}
+
+I don't know
+
+\section{Exercise 4.5.3}
+
+I don't know
+
+\end{document}

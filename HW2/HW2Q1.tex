@@ -1,0 +1,182 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+\usepackage[dvipsnames]{xcolor}
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 2 Problem 1}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 5.1.2}
+
+
+\begin{quote}
+    \noindent\texttt{\underline{convex-subsequence($i$)}}: Given an array
+    $A[1,...,n]$ as global and parameter $i \in [n]$, returns the length of the
+    longest convex subsequence in $A[1, ..., i]$.
+    
+    \begin{steps}
+        \item if $i \leq 2$, Return $0$
+        \item Return $Max(\{1 + \texttt{convex-subsequence($j$)} : j,k \in [n], 2 \leq j < i-1, 1 \leq k < j-1, A[i] - A[j] \geq A[j] - A[k] \} \cup \{ \texttt{convex-subsequence($i-1$)}\})$
+    \end{steps}
+\end{quote}
+
+To produce the length of the longest convex subsequence in $A[1, ..., n]$ call
+$\texttt{convex-subsequence($n$)}$. The function uses three indexes to track all
+possible pairs of line segments that share a node. The search space is $n^3$
+for an $O(n^3)$ runtime.
+
+\section{Exercise 5.1.4}
+
+\begin{quote}
+    \noindent\texttt{\underline{even($i$)}}: Given $A[1,...,n]$ as a global and
+    $i \in [n]$, returns the length of the longest subsequence of $A[1, ...,i]$
+    which has even sum.
+
+    \begin{steps}
+        \item If $i$ is 1 
+        \begin{steps}
+            \item If $A[i]$ is even, Return 1
+            \item If $A[i]$ is odd, Return 0
+        \end{steps}
+        \item If $A[i]$ is even
+        \begin{steps}
+            \item Return $Max(\{\texttt{even($i-1$)}\} \cup \{\texttt{even($j$)}+1$ for $1 \leq j < i$ where $ A[j] < A[i]\})$
+        \end{steps}
+        \item If $A[i]$ is odd
+        \begin{steps}
+            \item Return $Max(\{\texttt{even($i-1$)}\} \cup \{\texttt{odd($j$)}+1$ for $1 \leq j < i$ where $ A[j] < A[i]\})$
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+\begin{quote}
+    \noindent\texttt{\underline{odd($i$)}}: Given $A[1,...,n]$ as a global and
+    $i \in [n]$, returns the length of the longest subsequence of $A[1, ...,i]$
+    which has odd sum.
+
+    \begin{steps}
+        \item If $i$ is 1 
+        \begin{steps}
+            \item If $A[i]$ is even, Return 0
+            \item If $A[i]$ is odd, Return 1
+        \end{steps}
+        \item If $A[i]$ is even
+        \begin{steps}
+            \item Return $Max(\{\texttt{odd($i-1$)}\} \cup \{\texttt{odd($j$)}+1$ : $1 \leq j < i$, $ A[j] < A[i]\})$
+        \end{steps}
+        \item If $A[i]$ is odd
+        \begin{steps}
+            \item Return $Max(\{\texttt{odd($i-1$)}\} \cup \{\texttt{even($j$)}+1$ : $1 \leq j < i$, $ A[j] < A[i]\})$
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+To produce the largest subsequence that sums to an odd or even number for an
+array $A$ of size $n$, simply call $\texttt{odd($n$)}$ or $\texttt{even($n$)}$,
+respectively. The runtime of the above functions is $O(n^2)$, it will go through
+all combinations of indices representing the last two values in the subsequence,
+of which there are $\frac{n(n-1)}{2}$. Repeated calls to the above functions are
+memoized, reducing the work performed to the parameter space of the functions.
+
+\section{Exercise 5.1.6}
+
+\begin{quote}
+    \noindent\texttt{\underline{american($i$)}}: Given $A[1,...,n]$ as a global
+    and $i \in [n]$, returns the length of the longest subsequence of $A[1, ...,
+    i]$ which has alternating colors red, white, blue, ... whose start is any of
+    the colors.
+
+    \begin{steps}
+        \item If $i$ is 1, Return 1
+        \item Return $Max(
+            \{\texttt{american($i-1$)}\} \cup \{
+                \texttt{american($j$)} + 1 : 1 \leq j < i, A[i] $ is next color after $ A[j]
+                \})$
+    \end{steps}
+\end{quote}
+
+To produce the largest subsequence of american colors in $A$ of length $n$,
+simply call \texttt{american($n$)}. Repeated calls to the function are cached
+based on the parameter $i$. The runtime is $O(n)$, there are $n$ possible total
+different calls to the function even though the total number of function calls
+made is quadratic in the worst case.
+
+\section{Exercise 5.1.7}
+
+\begin{quote}
+    \noindent\texttt{\underline{palindrome($i$, $j$)}}: Given $A[1,...,n]$ as a
+    global and $i,j \in [n]$, returns the length of the longest subsequence of
+    in $A$ that is a palindrome.
+
+    \begin{steps}
+        \item If $j < i$ Return 0
+        \item If $j = i$ Return 1
+        \item If $A[j] = A[i]$ Return $2 + \texttt{palindrome($i+1$, $j-1$)}$
+        \item Return Max(\texttt{palindrome($i+1$, $j$)}, \texttt{palindrome($i$, $j-1$)})
+    \end{steps}
+\end{quote}
+
+To get the length of the longest palindromic subsequence of a string $A$ of
+length $n$, call \texttt{palindrome($1$, $n$)}. The runtime of this algorithm is
+$O(n^2)$ when the function is memoized based on parameters $i$ and $j$. There
+are two recursive calls that sweep right and left, respectively, producing all
+combinations of $i$ and $j$ in $[n]$ where $i < j$. Constant work is performed
+within each call of the function.
+
+\end{document}

@@ -1,0 +1,100 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+\usepackage[dvipsnames]{xcolor}
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 2 Problem 1}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 5.13}
+
+\begin{quote}
+    \noindent\texttt{\underline{subs($k$, $h$, $v$)}}: Given parameters $k$, a
+    set of bids (a bid is a tuple of $x$, the order price, and $y$, the inches of
+    sub that fulfills the order), $h$, the inches of ham sub left, and $v$, the
+    inches of veggie sub left, returns the maximum profit from selling the two
+    sandwiches to the
+    set of bidders.
+    \begin{steps}
+        \item If $k$ is empty, Return $0$
+        \item $b = k[0]$
+        \item if ($b$ is a disjunctive bid or a bid for ham) and $h \geq b_y$
+        \begin{steps}
+            \item Return $Max($
+            \\ $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h-b_y$, $v$)}$, \textcolor{ForestGreen}{// Take the bid}
+            \\ $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ $)$
+        \end{steps}
+        \item if ($b$ is a disjunctive bid or a bid for veggie) and $v \geq b_y$
+        \begin{steps}
+            \item Return $Max($
+            \\ $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h$, $v-b_y$)}$, \textcolor{ForestGreen}{// Take the bid}
+            \\ $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ $)$
+        \end{steps}
+        \item Return $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Unable to take bid}
+    \end{steps}
+\end{quote}
+
+Given a ham sub $m$ inches long and a veggie sub $n$ inches long, find the
+maximum profit from selling the subs to a set of $k$ bidders by calling
+\texttt{subs($k$, $m$, $n$)}. The total number of calls that will be made is the
+size of the powerset of the set of bids, so the runtime is $O(2^k)$.
+
+\end{document}

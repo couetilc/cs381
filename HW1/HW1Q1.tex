@@ -1,0 +1,144 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+\usepackage[dvipsnames]{xcolor}
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 1 Problem 1}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 3.3}
+
+I've split up the approach into two functions, the first function calculates the
+minimum distance across all the points, you have to do that before you calculate
+the set of points with a factor of that distance, and then it case the recursive
+function that returns the list of points. The key is making
+\texttt{within-factor-2} the same runtime as \texttt{min-distance}, so you can
+call both of them sequentially and still
+achieve the same worst-case runtime.
+
+\begin{quote}
+    \noindent\texttt{\underline{within-factor-2($P$)}}: Given $P$, a set of $n$ points in $\mathbb{R}^2$, it returns a list of all pairs of points with a distance a factor of 2 greater than the minimum distance between all points.
+    \begin{steps}
+        \item $d = \texttt{min-distance($P$)}$
+        \item Return $\texttt{within-distance($P$, $2 * d$)}$
+    \end{steps}
+\end{quote}
+
+\begin{quote}
+    \noindent\texttt{\underline{within-distance($P$, $d$)}}: Given $P$, a set of $n$ points in $\mathbb{R}^2$, and $d$, a measure of distance, it returns a list of all pairs of points in $P$ within the distance $d$.
+    \begin{steps}
+        \item If $|P| \leq 1$, return \{\}
+        \item Let $X$ be an array that contains all $x$ of $(x, y) \in P$
+        \item $a = \texttt{median($X$)} $ \textcolor{ForestGreen}{// O(n)}
+        \item $P_1 = \{ (x, y) \in P : x < a \}$ \textcolor{ForestGreen}{// O(n)}
+        \item $P_2 = \{ (x, y) \in P : x \geq a \}$ \textcolor{ForestGreen}{// O(n)}
+        \item $d_1 = \texttt{within-distance($P_1$, $d$)}$
+        \item $d_2 = \texttt{within-distance($P_2$, $d$)}$
+        \item Return $\{ p \in P : |p_i - p_j| < d \}$ over all $i, j$ with $i < j < i + 22$ \textcolor{ForestGreen}{// O(1)}
+    \end{steps}
+\end{quote}
+
+The recurrence relation for the algorithm \texttt{within-distance} is
+
+\begin{quote}
+$T(n) = O(n) + O(n) + 2\,T(n/2) + O(1)$
+\end{quote}
+
+The calculation of the median is in $O(n)$, as stated in the textbook.
+Separation of the points by median into two sets can occur in a single pass,
+$O(n)$. The recursion occurs on sets half the size of the starting set, by the
+defintion of splitting points along some median. 
+
+Now, the final calculation of distance between pairs is bounded by a constant
+value 22, thus the work done is also constant, or $O(1)$. The argument is as
+follows.
+
+The last step of the algorithm checks the set of points next to the median
+within the distance $d$ that is the factor 2 of the of the minimum distance,
+henceforth $2\delta$. So for a given point $p$, we only need to check within
+$2\delta$ on its own side of the median line and $2\delta$ on the other side.
+We split that region in two, and consider one half. Each point in the half is
+still at least $\delta$ from any other. Drawing a circle with that point at the
+center, the maximum points you can fit in the square will lie within a padded
+square whose dimensions are $3\delta$ by $3\delta$, its width is the $2\delta$
+search space distance plus twice the $\delta/2$ radius of the packed circles.
+So, the maximum number of circles that can fit in the padded square are the
+maximum number within our search distance, thus the maximum number we need to
+check. That number is the ratio of the area of the padded square and the point
+circle
+
+\begin{quote}
+$\dfrac{(2\delta + 2(\frac{\delta}{2})) ^ 2}{\pi (\frac{\delta}{2}) ^ 2} = \dfrac{(3\delta)^2}{\pi (\frac{\delta^2}{4})} = \dfrac{36}{\pi} = 11.45... \approx 11$
+\end{quote}
+
+There are no fractional points, so there are 11 points to check in the square,
+there are two squares so 22 points total to check, the value of the constant in
+the recursion.
+
+To take this one step further, consider the factor of 2 as some factor $F$. The
+side of the padded square is then $F\delta + \delta$ and the final ratio becomes
+
+\begin{quote}
+$\dfrac{F^2 + 2F + 1}{\pi}$
+\end{quote}
+
+and we realize that as you increase the factor of the minimum distance to search
+the number of points to check increases quadratically.
+
+\end{document}

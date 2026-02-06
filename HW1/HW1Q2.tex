@@ -1,0 +1,111 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 1 Problem 2}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 3.7}
+
+The intuition is to compute pairs of sums, and then to realize that recursively
+computing pairs of sums gives you the even prefix sums, after which the odd
+prefix sums can be computed by simple subtraction of the previous value
+
+\begin{quote}
+    \noindent\texttt{\underline{prefix-sum($A$)}}: Given a array $A$ of length $n$, it returns an array of length $n$ containing the prefix sums of $A$.
+    
+    \begin{steps}
+        \item If $|A|$ is 1, return $A$
+        \item Let $B$ be an array of length $ \lfloor n / 2 \rfloor$
+        \item $B[i] = a_{2i} + a_{2i-1}$ for $i = 1, ..., \lfloor n / 2 \rfloor$
+        \item $C = $ \texttt{prefix-sum($B$)}
+        \item Let $D$ be a new array of length $n$
+        \item for $i = 1, ..., n$
+        \begin{steps}
+            \item if $i$ is even, $D[i] = C[i/2]$
+            \item if $i$ is odd, $D[i] = C[\lceil i / 2 \rceil] - A[i]$
+        \end{steps}
+        \item return $D$
+    \end{steps}
+\end{quote}
+
+The recurrence relation for work will be notated with $W$, the recurrence
+relation for time will be notated with $T$.
+
+The total work performed is $O(n \, log(n))$
+
+\begin{quote}
+$W(1) = 1$
+\newline
+$W(n) = O(n) + W(n / 2) + O(n)$
+\end{quote}
+
+The total time taken is $O(log(n))$
+
+\begin{quote}
+$T(1) = 1$
+\newline
+$T(n) = O(1) + T(n / 2) + O(1)$
+\end{quote}
+
+The summations can be done in parallel, thus $O(n)$ work is done in $O(1)$ time.
+The size of the array is cut down by half at each iteration, thus the height of
+the tree is $log(n)$ with constant time taken at each level.
+
+\end{document}

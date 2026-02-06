@@ -1,0 +1,180 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry} %One inch margins
+
+%Makes things a little prettier
+\usepackage{lmodern}%
+\usepackage[T1]{fontenc}%
+\usepackage{microtype}%
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+\usepackage[dvipsnames]{xcolor}
+
+% Bring in the math!
+\usepackage{amsmath}%
+\usepackage{amsthm}%
+\usepackage{amssymb}%
+\usepackage{amsfonts}%
+
+% mleftright is helpful for making the parenthesis (and other delimiters) fit their contents height-wise.
+\usepackage{mleftright}%
+% The following macro puts parenthesis around the contents using mleftright and adapt the height.
+\newcommand{\parof}[1]{\mleft( #1 \mright)}
+% Of course you can define similar commands for other delimiters.
+
+
+
+% To typeset algorithms I simply use numbered lists (e.g., enumerate). I use nested lists for inner clauses. The following is a prettier version of this approach that I use in my notes; it changes the font of the numbering to typewriter font (as a visual cue), normalizes some margins, and so forth. I often put the whole algorithm inside a \begin{quote}...\end{quote} to help set it apart from the text. You can use labels and references (as usual) to refer to steps.
+
+\usepackage{enumitem}%
+
+\newcommand{\stepsfont}{\normalfont}%
+
+\usepackage{enumitem}
+\newlist{steps}{enumerate}{9}
+\setlist[steps]{before=\upshape\stepsfont,font=\ttfamily} %
+\setlist[steps,1]{leftmargin=*,labelsep=1ex,label={\arabic*.},ref={\arabic*}} %
+\setlist[steps,2]{leftmargin=*,labelsep=1ex,label={\Alph*.},ref={\thestepsi.\Alph*}} %
+\setlist[steps,3]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsii.\arabic*}} %
+\setlist[steps,4]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsiii.\alph*}} %
+\setlist[steps,5]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsiv.\arabic*}} %
+\setlist[steps,6]{leftmargin=*,labelsep=1ex,label={\Alph*.},
+  ref={\thestepsv.\Alph*}} %
+\setlist[steps,7]{leftmargin=*,labelsep=1ex,label=\arabic*.,
+  ref={\thestepsvi.\roman*}} %
+\setlist[steps,8]{leftmargin=*,labelsep=1ex,label={\alph*.},
+  ref={\thestepsvii.\alph*}} %
+\setlist[steps,9]{leftmargin=*,labelsep=1ex,label={\arabic*.},
+  ref={\thestepsviii.\arabic*}} %
+\newlist{stepitems}{itemize}{1} % For when I want to put an itemized list inside the code.
+\setlist[stepitems]{before=\upshape\ttfamily,label=*,leftmargin=*,labelsep=1ex}%
+
+
+
+\title{CS381 Homework 2 Problem 1}
+\author{Connor Couetil}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 5.2.1}
+
+\begin{quote}
+    \noindent\texttt{\underline{longest-common-sub($i$, $k$)}}: Given $A[1, ...,
+    m]$ and $B[1, ..., n]$ as globals where parameter $i \in [m]$ and $k \in
+    [n]$ , returns the length of the longest common subsequence of $A[1, ...,
+    i]$ and $B[1, ..., k]$.
+
+    \begin{steps}
+        \item If $i = 0$ or $k = 0$ Return 0
+        \item If $A[i] = A[k]$
+        \begin{steps}
+            \item Return $Max(
+                \texttt{longest-common-sub($i-1$, $k$)},
+                \texttt{longest-common-sub($i$, $k-1$)},
+                2 + \texttt{longest-common-sub($i-1$, $k-1$)},
+                )$
+        \end{steps}
+        \item Return $Max(
+            \texttt{longest-common-sub($i-1$, $k$)},
+            \texttt{longest-common-sub($i$, $k-1$)},
+            )$
+    \end{steps}
+\end{quote}
+
+Given arrays $A$ with length $m$ and $B$ with length $n$, find the longest
+common subsequence with the call $\texttt{longest-common-sub($m$, $n$)}$.  The
+number of possible parameter combinations is $m \cdot n$, thus the runtime is
+$O(mn)$ when the function is memoized based on parameters $i$ and $k$
+
+\section{Exercise 5.2.2}
+
+\begin{quote}
+    \noindent\texttt{\underline{shortest-common-super($i$, $k$)}}: Given $A[1, ...,
+    m]$ and $B[1, ..., n]$ as globals where parameter $i \in [m]$ and $k \in
+    [n]$ , returns the length of the shortest common supersequence of $A[1, ...,
+    i]$ and $B[1, ..., k]$.
+
+    \begin{steps}
+        \item If $i = 0$ Return $n$ \textcolor{ForestGreen}{// |B|}
+        \item If $k = 0$ Return $m$ \textcolor{ForestGreen}{// |A|}
+        \item If $A[i] = B[k]$
+        \begin{steps}
+            \item Return $1 + \texttt{shortest-common-super($i-1$, $k-1$)}$
+        \end{steps}
+        \item Return $Min(1 + \texttt{shortest-common-super($i-1$, $k$)}, 1 +
+        \texttt{shortest-common-super($i$, $k-1$)})$
+    \end{steps}
+\end{quote}
+
+Given arrays $A$ with length $m$ and $B$ with length $n$, find the shortest
+common supersequence with the call $\texttt{shortest-common-super($m$, $n$)}$.  The
+number of possible parameter combinations is $m \cdot n$, thus the runtime is
+$O(mn)$ when the function is memoized based on parameters $i$ and $k$.
+
+\section{Exercise 5.2.3}
+
+\begin{quote}
+    \noindent\texttt{\underline{palindrome($i$, $j$, $k$, $l$)}}: Given $A[1,
+    ..., m]$ and $B[1, ..., n]$ as globals where parameter $i,j \in [m]$ and
+    $k,l \in [n]$ , returns the length of the longest common subsequence of
+    $A[1, ..., i]$ and $B[1, ..., k]$ that is a palindrome.
+
+    \begin{steps}
+        \item If $i > j$ or $k > l$ Return 0
+        \item If $i = j$
+        \begin{steps}
+            \item If $A[i] = B[k]$ or $A[i] = B[l]$
+            \begin{steps}
+                \item Return 1
+            \end{steps}
+            \item Else
+            \begin{steps}
+                \item Return 0
+            \end{steps}
+        \end{steps}
+        \item If $k = l$
+        \begin{steps}
+            \item If $B[k] = A[i]$ or $B[k] = A[j]$
+            \begin{steps}
+                \item Return 1
+            \end{steps}
+            \item Else 
+            \begin{steps}
+                \item Return 0
+            \end{steps}
+        \end{steps}
+        \item If $A[i] = A[j] = B[k] = B[l]$
+        \begin{steps}
+            \item Return $Max($
+                2 + \texttt{palindrome($i+1$, $j-1$, $k+1$, $l-1$)},
+                \texttt{palindrome($i+1$, $j$, $k$, $l$)},
+                \texttt{palindrome($i$, $j-1$, $k$, $l$)},
+                \texttt{palindrome($i$, $j$, $k+1$, $l$)},
+                \texttt{palindrome($i$, $j$, $k$, $l-1$)}
+                $)$
+        \end{steps}
+        \item Else
+        \begin{steps}
+            \item $Max($
+                \texttt{palindrome($i+1$, $j$, $k$, $l$)},
+                \texttt{palindrome($i$, $j-1$, $k$, $l$)},
+                \texttt{palindrome($i$, $j$, $k+1$, $l$)},
+                \texttt{palindrome($i$, $j$, $k$, $l-1$)}
+                $)$
+        \end{steps}
+    \end{steps}
+\end{quote}
+
+Given arrays $A$ with length $m$ and $B$ with length $n$, find the longest
+common subsequence that is a palindrome with the call $\texttt{palindrome($0$,
+$m$, $0$, $n$)}$.  The number of possible parameter combinations is $m \cdot m
+\cdot n \cdot n$, thus the runtime is $O(m^2n^2)$ when the function is memoized
+based on parameters $i$, $j$, $k$ and $l$.
+
+\end{document}
