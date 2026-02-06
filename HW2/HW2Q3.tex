@@ -74,18 +74,40 @@
     \begin{steps}
         \item If $k$ is empty, Return $0$
         \item $b = k[0]$
-        \item if ($b$ is a disjunctive bid or a bid for ham) and $h \geq b_y$
+        \item if $b$ is a bid for ham and $h \geq b_y$
         \begin{steps}
             \item Return $Max($
-            \\ $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h-b_y$, $v$)}$, \textcolor{ForestGreen}{// Take the bid}
-            \\ $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ \hphantom{    } $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h-b_y$, $v$)}$, \textcolor{ForestGreen}{// Take the bid}
+            \\ \hphantom{    } $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
             \\ $)$
         \end{steps}
-        \item if ($b$ is a disjunctive bid or a bid for veggie) and $v \geq b_y$
+        \item if $b$ is a bid for veggie and $v \geq b_y$
         \begin{steps}
             \item Return $Max($
-            \\ $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h$, $v-b_y$)}$, \textcolor{ForestGreen}{// Take the bid}
-            \\ $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ \hphantom{    } $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h$, $v-b_y$)}$, \textcolor{ForestGreen}{// Take the bid}
+            \\ \hphantom{    } $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ $)$
+        \end{steps}
+        \item If $b$ is disjunctive and $h \geq b_y$ and $v \geq b_y$
+        \begin{steps}
+            \item Return $Max($
+            \\ \hphantom{    } $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h-b_y$, $v$)}$, \textcolor{ForestGreen}{// Take the ham bid}
+            \\ \hphantom{    } $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h$, $v-b_y$)}$, \textcolor{ForestGreen}{// Take the veggie bid}
+            \\ \hphantom{    } $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ $)$
+        \end{steps}
+        \item If $b$ is disjunctive and $h \geq b_y$
+        \begin{steps}
+            \item Return $Max($
+            \\ \hphantom{    } $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h-b_y$, $v$)}$, \textcolor{ForestGreen}{// Take the ham bid}
+            \\ \hphantom{    } $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
+            \\ $)$
+        \end{steps}
+        \item If $b$ is disjunctive and $v \geq b_y$
+        \begin{steps}
+            \item Return $Max($
+            \\ \hphantom{    } $b_x - \texttt{cost($b_y$)} + \texttt{subs($k \setminus b$, $h$, $v-b_y$)}$, \textcolor{ForestGreen}{// Take the veggie bid}
+            \\ \hphantom{    } $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Don't take the bid}
             \\ $)$
         \end{steps}
         \item Return $\texttt{subs($k \setminus b$, $h$, $v$)}$ \textcolor{ForestGreen}{// Unable to take bid}
